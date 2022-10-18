@@ -12,7 +12,7 @@ app.get('/posts', (req, res) => {
     res.send(posts);
 });
 
-app.post('/events', (req, res) => {
+app.post('/events', async (req, res) => {
     const { type, data } = req.body;
 
     if (type === 'PostCreated') {
@@ -27,6 +27,16 @@ app.post('/events', (req, res) => {
         const post = posts[postId];
         post.comments.push({ id, content, status });
     };
+
+    if (type === 'CommentUpdated') {
+        const { id, content, postId, status } = data;
+
+        const postToUpdate = posts[postId];
+        const commentToUpdate = postToUpdate.comments.find(comment => comment.id === id);
+
+        commentToUpdate.status = status;
+        commentToUpdate.content = content;
+    }
 
     console.log(posts);
 
